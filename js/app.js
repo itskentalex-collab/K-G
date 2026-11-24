@@ -1,0 +1,48 @@
+var $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>[...(r||document).querySelectorAll(s)];
+K.esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+K.pick=a=>a[Math.floor(Math.random()*a.length)];
+K.uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+K.today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+K.fmt=d=>d?new Date(d+'T00:00').toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'';
+K.thoughts=['Some things stay, even when nothing is said.','Most days are small. That is where they hide.','A good memory rarely announces itself.','Not every pattern needs a name.','Quiet is also a way of paying attention.','The ordinary, kept carefully, becomes something else.','Nothing extraordinary. Yet worth remembering.','A collection of little moments.'];
+K.toast=m=>{var t=document.createElement('div');t.className='toast';t.textContent=m;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3400)};
+K.open=h=>{var d=$('#dlg');d.innerHTML=h;if(!d.open)d.showModal()};
+K.close=()=>{var d=$('#dlg');if(d.open)d.close()};
+K.ask=m=>new Promise(r=>{K.open('<p>'+m+'</p><div class="row"><button class="ghost" id="n">Cancel</button><button class="btn" id="y">Confirm</button></div>');$('#y').onclick=()=>{K.close();r(true)};$('#n').onclick=()=>{K.close();r(false)}});
+K.form=(t,fs,v,cb)=>{v=v||{};K.open('<h3>'+t+'</h3><form>'+fs.map(f=>{var x=v[f.n]!=null?v[f.n]:'',i;
+if(f.t=='area')i='<textarea name="'+f.n+'" rows="4">'+K.esc(x)+'</textarea>';
+else if(f.t=='sel')i='<select name="'+f.n+'">'+f.o().map(o=>'<option'+(o==x?' selected':'')+'>'+K.esc(o)+'</option>').join('')+'</select>';
+else if(f.t=='file')i='<input type="file" name="'+f.n+'" accept="image/*">';
+else i='<input name="'+f.n+'" type="'+(f.t||'text')+'" value="'+K.esc(x)+'"'+(f.r?' required':'')+'>';
+return '<label>'+f.l+i+'</label>'}).join('')+'<div class="row"><button type="button" class="ghost" data-x>Cancel</button><button class="btn">Save</button></div></form>');
+var fm=$('#dlg form');fm.onsubmit=async e=>{e.preventDefault();var o={};new FormData(fm).forEach((a,b)=>o[b]=a);await cb(o);K.close()}};
+K.del=async(k,id)=>{if(!await K.ask('Delete this? It cannot be undone.'))return;K.d[k]=K.d[k].filter(x=>x.id!=id);K.delImg(id);K.save();K.refresh();K.toast('Deleted')};
+K.empty=(m,b,a)=>'<div class="empty"><i></i><p>'+m+'</p>'+(a?'<button class="btn" data-a="'+a+'">'+b+'</button>':'')+'</div>';
+K.refresh=()=>{K.rend.forEach(f=>f());K.hyd(document)};
+K.beep=()=>{if(!K.d.set.snd)return;try{var a=K.ac=K.ac||new AudioContext(),o=a.createOscillator(),g=a.createGain();o.frequency.value=520;g.gain.value=.03;o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.06)}catch(e){}};
+K.burst=()=>{for(var i=0;i<28;i++){var s=document.createElement('i');s.className='bs';s.style.cssText='background:'+K.pick(['#FF5FA8','#2FE08A','#9B5CFF','#FF3B4F'])+';left:'+(10+Math.random()*80)+'vw;top:'+(30+Math.random()*40)+'vh;--dx:'+((Math.random()-.5)*300)+'px;--dy:'+((Math.random()-.9)*300)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1600)}};
+K.apply=()=>{var s=K.d.set;document.documentElement.dataset.theme=s.theme;document.body.classList.toggle('noanim',!s.anim)};
+K.card=m=>'<article class="card" data-id="'+m.id+'" tabindex="0"><div class="ph"'+(m.img?' data-img="'+m.id+'"':'')+'></div><div class="cb"><div class="meta"><span>'+K.fmt(m.date)+'</span><span>'+K.esc(m.cat)+'</span></div><h4>'+(m.fav?'<i class="fv"></i>':'')+K.esc(m.title)+'</h4></div></article>';
+function tick(){var n=new Date,h=n.getHours(),s=K.d.set;$('#clk').textContent=n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:!s.h24});$('#dt').textContent=n.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+$('#greet').textContent=h<5?'Still up. The page is quiet too.':h<12?'Good morning':h<18?'Good afternoon':'Good evening';document.body.classList.toggle('night',h<5)}
+K.ovRender=()=>{var d=K.d,day=Math.floor(Date.now()/864e5),fv=d.mem.filter(m=>m.fav),l=fv.length?fv:d.mem;
+$('#feat').innerHTML=l.length?K.card(l[day%l.length]):K.empty('No memories yet.','Add your first','addmem');
+$('#recent').innerHTML=d.mem.length?d.mem.slice(-3).reverse().map(K.card).join(''):K.empty('Recent memories will appear here.');
+$('#stats').innerHTML=[['Memories',d.mem.length],['Moments',d.mom.length],['Notes',d.notes.length]].map(x=>'<div><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('')};
+K.rend.push(K.ovRender);
+K.noteRender=()=>{var q=($('#nq').value||'').toLowerCase(),a=K.d.notes.filter(n=>(n.t+n.b).toLowerCase().includes(q)).sort((x,y)=>(+!!y.pin)-(+!!x.pin)||y.ts-x.ts);
+$('#nl').innerHTML=a.length?a.map(n=>'<article class="note"><h4>'+(n.pin?'<span class="pin">Pinned </span>':'')+K.esc(n.t)+'</h4><p>'+K.esc(n.b)+'</p><small>'+new Date(n.ts).toLocaleDateString()+'</small><div class="row"><button class="ghost" data-a="pinnote" data-id="'+n.id+'">'+(n.pin?'Unpin':'Pin')+'</button><button class="ghost" data-a="editnote" data-id="'+n.id+'">Edit</button><button class="ghost" data-a="delnote" data-id="'+n.id+'">Delete</button></div></article>').join(''):K.empty('No notes found.','New note','addnote')};
+K.rend.push(K.noteRender);
+Object.assign(K.act,{addnote:()=>K.act.editnote(),editnote:id=>{var n=K.d.notes.find(x=>x.id==id);K.form(n?'Edit note':'New note',[{n:'t',l:'Title',r:1},{n:'b',l:'Note',t:'area'}],n,async o=>{if(n){n.t=o.t;n.b=o.b}else K.d.notes.push({id:K.uid(),t:o.t,b:o.b,pin:false,ts:Date.now()});K.save();K.refresh();K.toast('Saved')})},
+pinnote:id=>{var n=K.d.notes.find(x=>x.id==id);n.pin=!n.pin;K.save();K.refresh()},delnote:id=>K.del('notes',id)});
+K.init=function(){K.load();K.apply();K.mods.forEach(f=>f());
+document.addEventListener('click',e=>{var b=e.target.closest('[data-a]');if(b){if(b.tagName=='A')e.preventDefault();var f=K.act[b.dataset.a];f&&f(b.dataset.id)}
+var c=e.target.closest('.card[data-id]');if(c&&!b)K.memView(c.dataset.id);if(e.target.closest('[data-x]'))K.close();if(e.target.closest('button,a'))K.beep()});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.classList&&e.target.classList.contains('card'))e.target.click()});
+$('#dlg').addEventListener('click',e=>{if(e.target.id=='dlg'&&!$('#dlg form'))K.close()});
+$('#nq').oninput=K.noteRender;
+$('#nt').onclick=()=>$('#thought').textContent=K.pick(K.thoughts);
+$('#thought').textContent=K.thoughts[Math.floor(Date.now()/864e5)%K.thoughts.length];
+$('.hero').addEventListener('pointermove',e=>{var r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--mx',(e.clientX-r.left)+'px');e.currentTarget.style.setProperty('--my',(e.clientY-r.top)+'px')});
+K.refresh();K.show(location.hash.slice(1),1);tick();setInterval(tick,1000)};
+document.addEventListener('DOMContentLoaded',K.init);
