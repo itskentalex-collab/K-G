@@ -1,5 +1,5 @@
-K.momRender=()=>{var a=K.d.mom.slice().sort((x,y)=>y.date.localeCompare(x.date));
-$('#tl').innerHTML=a.length?a.map(m=>'<li class="tl"><small>'+K.fmt(m.date)+'</small> <small>'+K.esc(m.cat)+'</small><h4>'+K.esc(m.title)+'</h4><p>'+K.esc(m.desc)+'</p>'+(m.img?'<div class="ph" data-img="'+m.id+'"></div>':'')+'<div class="row"><button class="ghost" data-a="editmom" data-id="'+m.id+'">Edit</button><button class="ghost" data-a="delmom" data-id="'+m.id+'">Delete</button></div></li>').join(''):K.empty('No moments yet. Add a date that mattered.','Add moment','addmom');
+K.momRender=()=>{var a=K.d.mom.slice().sort((x,y)=>y.date.localeCompare(x.date)),ed=K.canEdit?K.canEdit():true;
+$('#tl').innerHTML=a.length?a.map(m=>'<li class="tl"><small>'+K.fmt(m.date)+'</small> <small>'+K.esc(m.cat)+'</small><h4>'+K.esc(m.title)+'</h4><p>'+K.esc(m.desc)+'</p>'+(m.img?'<div class="ph" data-img="'+m.id+'"></div>':'')+(ed?'<div class="row"><button class="ghost" data-a="editmom" data-id="'+m.id+'">Edit</button><button class="ghost" data-a="delmom" data-id="'+m.id+'">Delete</button></div>':'')+'</li>').join(''):K.empty('No moments yet. Add a date that mattered.','Add moment','addmom');
 var els=$$('.tl'),show=!K.d.set.anim||!('IntersectionObserver' in window);
 if(show)return els.forEach(e=>e.classList.add('in'));
 var io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.1});els.forEach(e=>io.observe(e))};

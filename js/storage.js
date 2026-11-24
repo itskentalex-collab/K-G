@@ -1,7 +1,7 @@
 var K={d:null,db:null,urls:{},mods:[],rend:[],act:{}};
 K.def=()=>({mem:[],mom:[],col:['Little Things','Random Days','Places','Conversations','Favorites','Unsorted'],notes:[],unseen:false,set:{theme:'dark',anim:true,snd:false,h24:true}});
 K.load=function(){try{var o=JSON.parse(localStorage.getItem('klie'));K.d=Object.assign(K.def(),o);K.d.set=Object.assign(K.def().set,K.d.set)}catch(e){K.d=K.def()}};
-K.save=()=>{try{localStorage.setItem('klie',JSON.stringify(K.d))}catch(e){K.toast('Could not save: browser storage is full.')}};
+K.save=()=>{try{localStorage.setItem('klie',JSON.stringify(K.d))}catch(e){K.toast('Could not save: browser storage is full.')}if(K.cloudQueueSync)K.cloudQueueSync();};
 K.idb=()=>new Promise(r=>{if(K.db)return r(K.db);try{var q=indexedDB.open('klie',1);q.onupgradeneeded=()=>q.result.createObjectStore('img');q.onsuccess=()=>{K.db=q.result;r(K.db)};q.onerror=()=>r(null)}catch(e){r(null)}});
 K.tx=(m,f)=>K.idb().then(db=>new Promise(r=>{if(!db)return r();var t=db.transaction('img',m),q=f(t.objectStore('img'));t.oncomplete=()=>r(q&&q.result);t.onerror=()=>r()}));
 K.putImg=(id,b)=>K.tx('readwrite',s=>s.put(b,id));

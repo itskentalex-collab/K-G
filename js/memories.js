@@ -11,8 +11,8 @@ m?Object.assign({},m,{tags:m.tags.join(', ')}):{date:K.today(),col:'Unsorted'},a
 var n=m||{id:K.uid(),fav:false,img:false};Object.assign(n,{title:o.title,date:o.date,desc:o.desc,cat:o.cat,col:o.col,tags:o.tags.split(',').map(s=>s.trim()).filter(Boolean)});
 if(o.img&&o.img.size){await K.putImg(n.id,o.img);delete K.urls[n.id];n.img=true}
 if(!m)K.d.mem.push(n);K.save();K.refresh();K.toast('Saved')})};
-K.memView=id=>{var m=K.d.mem.find(x=>x.id==id);if(!m)return;
-K.open((m.img?'<div class="ph big" data-img="'+m.id+'" data-lb="'+m.id+'"></div>':'')+'<small>'+K.fmt(m.date)+'</small> <small>'+K.esc(m.cat)+'</small><h3>'+K.esc(m.title)+'</h3><p>'+K.esc(m.desc)+'</p><div class="tags">'+m.tags.map(t=>'<span>'+K.esc(t)+'</span>').join('')+'</div><small>Collection: '+K.esc(m.col)+'</small><div class="row"><button class="ghost" data-a="favmem" data-id="'+m.id+'">'+(m.fav?'Remove favorite':'Favorite')+'</button><button class="ghost" data-a="editmem" data-id="'+m.id+'">Edit</button><button class="ghost" data-a="delmem" data-id="'+m.id+'">Delete</button><button class="btn" data-x>Close</button></div>');
+K.memView=id=>{var m=K.d.mem.find(x=>x.id==id);if(!m)return;var ed=K.canEdit?K.canEdit():true;
+K.open((m.img?'<div class="ph big" data-img="'+m.id+'" data-lb="'+m.id+'"></div>':'')+'<small>'+K.fmt(m.date)+'</small> <small>'+K.esc(m.cat)+'</small><h3>'+K.esc(m.title)+'</h3><p>'+K.esc(m.desc)+'</p><div class="tags">'+m.tags.map(t=>'<span>'+K.esc(t)+'</span>').join('')+'</div><small>Collection: '+K.esc(m.col)+'</small><div class="row">'+(ed?'<button class="ghost" data-a="favmem" data-id="'+m.id+'">'+(m.fav?'Remove favorite':'Favorite')+'</button><button class="ghost" data-a="editmem" data-id="'+m.id+'">Edit</button><button class="ghost" data-a="delmem" data-id="'+m.id+'">Delete</button>':'')+'<button class="btn" data-x>Close</button></div>');
 K.hyd($('#dlg'))};
 Object.assign(K.act,{addmem:()=>K.memEdit(),editmem:id=>K.memEdit(id),delmem:id=>K.del('mem',id),view:id=>K.memView(id),favmem:id=>{var m=K.d.mem.find(x=>x.id==id);m.fav=!m.fav;K.save();K.refresh();K.memView(id)}});
 K.mods.push(()=>{['mq','mc','ml','mf'].forEach(i=>$('#'+i).oninput=K.memRender);

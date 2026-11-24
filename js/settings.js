@@ -1,10 +1,12 @@
 K.valid=o=>{var dt=/^\d{4}-\d{2}-\d{2}$/,ok=m=>m&&typeof m.id=='string'&&typeof m.title=='string'&&dt.test(m.date);
 return !!o&&typeof o=='object'&&['mem','mom','col','notes'].every(k=>Array.isArray(o[k]))&&o.mem.every(ok)&&o.mom.every(ok)&&o.col.every(c=>typeof c=='string')&&o.notes.every(n=>n&&typeof n.id=='string'&&typeof n.t=='string')&&(!o.imgs||(typeof o.imgs=='object'&&Object.values(o.imgs).every(v=>typeof v=='string'&&v.indexOf('data:image/')==0)))};
 Object.assign(K.act,{
+enablecloud:()=>K.enableCloudEditing&&K.enableCloudEditing(),
+publishcloud:()=>K.publishLocalArchive&&K.publishLocalArchive(),
 export:async()=>{var o=JSON.parse(JSON.stringify(K.d));o.v=1;o.imgs={};for(var x of K.d.mem.concat(K.d.mom))if(x.img){var b=await K.getImg(x.id);if(b)o.imgs[x.id]=await new Promise(r=>{var f=new FileReader;f.onload=()=>r(f.result);f.readAsDataURL(b)})}
 var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o)],{type:'application/json'}));a.download='project-klie-'+K.today()+'.json';a.click();K.toast('Archive exported')},
 import:()=>$('#imp').click(),
-wipe:async()=>{if(!await K.ask('Clear all memories, moments, notes and settings from this browser? Export a backup first. This cannot be undone.'))return;localStorage.removeItem('klie');await K.clearImgs();K.urls={};K.d=K.def();K.apply();K.refresh();K.toast('Local data cleared')}});
+wipe:async()=>{if(!await K.ask('Clear all memories, moments, notes and settings from this browser? Export a backup first. This cannot be undone.'))return;localStorage.removeItem('klie');await K.clearImgs();K.urls={};K.d=K.def();K.apply();K.save();K.refresh();K.toast('Local data cleared')}});
 K.mods.push(()=>{var s=K.d.set;
 $('#s-th').value=s.theme;$('#s-th').onchange=e=>{s.theme=e.target.value;K.save();K.apply()};
 $('#s-cl').value=s.h24?'24':'12';$('#s-cl').onchange=e=>{s.h24=e.target.value=='24';K.save()};
