@@ -1,5 +1,5 @@
 // PROJECT KLIE — public browser configuration only. Never put a service-role key here.
 window.KLIE_CLOUD_CONFIG = {
-  url: "YOUR_SUPABASE_PROJECT_URL",
-  anonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY"
+  url: "https://xkxubfojecpnubgcfzwk.supabase.co/rest/v1/",
+  anonKey: "sb_publishable_zvJ3ZoKFEp8O8NfBIphYHA_3kA7Qthf"
 };
