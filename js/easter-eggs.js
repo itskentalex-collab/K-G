@@ -1,6 +1,0 @@
-K.unlock=function(m){K.d.unseen=true;K.save();K.burst();K.open('<h3>'+m[0]+'</h3><p>'+m[1]+'</p><div class="row"><button class="ghost" data-x>Not now</button><a class="btn" href="#unseen" data-x>Open THE UNSEEN</a></div>')};
-K.mods.push(()=>{
-var seq=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'],pos=0;
-document.addEventListener('keydown',e=>{var k=e.key.toLowerCase();pos=k==seq[pos]?pos+1:(k==seq[0]?1:0);if(pos==seq.length){pos=0;K.burst();document.body.classList.add('konami');K.toast('Something shifted.');K.open('<h3>You remembered.</h3><p>Some people keep old codes the way others keep old songs. This one was never about winning.</p><p class="sm">Hint: the smallest symbol on the page has more to say.</p><div class="row"><button class="btn" data-x>Close</button></div>')}});
-var n=0,t;$$('.logo').forEach(l=>l.addEventListener('click',()=>{clearTimeout(t);t=setTimeout(()=>n=0,2000);if(++n==7){n=0;K.unlock(['You noticed.','There is a page that is not in the menu.'])}}));
-var s=0,st;$('#star').onclick=()=>{clearTimeout(st);st=setTimeout(()=>s=0,3000);if(++s==5){s=0;K.unlock(['Small things stay.','Not everything needs to be explained. Some things only need to be found.'])}}});
