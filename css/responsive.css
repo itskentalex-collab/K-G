@@ -1,0 +1,6 @@
+@media(max-width:860px){
+.top{display:flex;position:fixed;inset:0 0 auto 0;height:58px;align-items:center;justify-content:space-between;padding:0 16px;background:var(--bg2);border-bottom:1px solid var(--ln);z-index:30}.top .logo{margin:0}
+#nav{transform:translateX(-102%);transition:transform .3s;padding-top:76px;width:min(280px,82vw)}#nav.open{transform:none}#nav .logo{display:none}#nav a:not(.logo){padding:13px 12px}
+main{margin-left:0;padding:84px 18px 20px}.g2{grid-template-columns:1fr}.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.ph-h .btn{width:100%}.msg{max-width:92%}.bar select{flex:1}.stats{gap:18px}dialog{padding:18px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.btn,.ghost{padding:12px 18px}}

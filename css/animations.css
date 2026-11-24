@@ -1,0 +1,11 @@
+.pg.on{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+dialog[open]{animation:pop .25s ease both}@keyframes pop{from{opacity:0;transform:scale(.96)}}
+.toast{animation:fade .3s both}
+.tl{opacity:0;transform:translateY(14px);transition:opacity .7s,transform .7s}.tl.in{opacity:1;transform:none}
+.dots span{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--mu);animation:blink 1s infinite}.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.bs{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--ac);box-shadow:0 0 10px currentColor;z-index:90;pointer-events:none;animation:burst 1.5s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+body.konami main{animation:konami 1.6s ease}@keyframes konami{0%,100%{filter:none}40%{filter:hue-rotate(40deg) brightness(1.2)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.tl{opacity:1;transform:none}.bs{display:none}}
